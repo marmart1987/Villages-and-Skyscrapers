@@ -84,7 +84,7 @@ function BuildConfirm(BuildingNo,sector){
       }
     function hideConfirm(){
       clear();
-      hideConfirmButton.locate(100000,100000);
+     
       game();
 
 

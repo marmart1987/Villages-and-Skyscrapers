@@ -31,8 +31,8 @@ p5.prototype.runGUI = function () {
 	cl_lastHovered = null;
 	cl_mouseWasPressed = mouseIsPressed;
 }
-function touchStarted(){
-cl_mouseWasPressed = true;
+function touchEnded(){
+
 }
 
 

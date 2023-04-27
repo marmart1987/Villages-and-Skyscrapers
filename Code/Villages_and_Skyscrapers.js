@@ -291,7 +291,7 @@ function updateBuildings(){
 
 }
 function mousePressed(){
-	if(confirming == true){
+	if(confirming == true ){
 hideConfirm();
 	}
 
