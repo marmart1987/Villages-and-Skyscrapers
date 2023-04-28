@@ -7,7 +7,7 @@ function windowResized() {
 	  resizeCanvas(windowWidth, windowHeight);
 	  game();
 	  clear();
-	  //hideConfirmButton.hide();
+	  // hideConfirmButton.hide();
 	  }else{
 		resizeCanvas(windowWidth, windowHeight);
 		playMenu();

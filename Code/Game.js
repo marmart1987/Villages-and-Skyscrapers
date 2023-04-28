@@ -41,4 +41,4 @@ for(let updatee = 0; updatee<buildingInfo.length;updatee++){
  
  strokeWeight(5);
  line(0,windowHeight/10,windowWidth,windowHeight/10);
-}
+} 

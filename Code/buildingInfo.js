@@ -41,7 +41,7 @@ function info(){
 
   playerInfo = {
     resources : {
-      Wood : 0,
+      Wood : 0, 
       Stone : 0
 
     },
