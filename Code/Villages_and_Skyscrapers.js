@@ -1,3 +1,5 @@
+
+
 var TSeconds;
 var TMinutes;
 var THours;
@@ -93,6 +95,7 @@ function preload() {
 }
 function setup() { //Runs on program start
 
+	
 	let pfkb = defaultsDeep(tstob2,tstob)
 	
 	clearStorage();
@@ -148,7 +151,14 @@ clearStorage();
 
 
 function draw() {
-playerInfo.updateResources();
+	scroll(0,0)
+	if(buildingInfo !== getItem("buildingInfo")){
+		playerInfo.updateResources();
+
+
+	}
+
+storeItem("buildingInfo",buildingInfo);
 
 
 	playButton.draw(); 
@@ -183,7 +193,7 @@ playerInfo.updateResources();
 	//print(activeTimers[i]);
 	}
 	
-	storeItem("buildingInfo",buildingInfo);
+	
 
 }
 
