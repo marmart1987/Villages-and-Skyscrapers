@@ -94,6 +94,7 @@ function preload() {
 
 }
 function setup() { //Runs on program start
+
 	
 	let pfkb = defaultsDeep(tstob2,tstob)
 	
@@ -150,6 +151,7 @@ clearStorage();
 
 
 function draw() {
+	scroll(0,0)
 	if(buildingInfo !== getItem("buildingInfo")){
 		playerInfo.updateResources();
 
