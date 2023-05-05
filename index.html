@@ -3,15 +3,15 @@
 <head>
 		<title>Villages and Skyscrapers</title>
 
-		<meta name="referrer" content="origin" />
+		<!--<meta name="referrer" content="origin" />-->
     <style>
 	  
 	</style>
     <!-- Load the P5.js library -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 		<script src="Libraries/p5.clickable.js"></script>
-		<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1368.0.min.js"></script>
-		<script src="https://accounts.google.com/gsi/client" async defer></script>
+		<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1368.0.min.js" defer></script>
+		<script src="https://accounts.google.com/gsi/client" ></script>
 		
 	</head>
 
@@ -38,23 +38,34 @@
 		AWS.config.region = 'us-east-1'; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
+	Logins: { // optional tokens, used for authenticated login
+      
+        //'accounts.google.com': 'GOOGLETOKEN'
+	}
 });
 	  google.accounts.id.initialize({
 		client_id: '966381614391-cbnnk9begs973tfj216nn3938k5jr3ur.apps.googleusercontent.com',
 		callback: hellop
 	  });
-	  google.accounts.id.prompt();
+	  //google.accounts.id.prompt();
+	  google.accounts.id.prompt((notification) => {
+		if(notification){
+      console.log(notification,notification.getMomentType())
+		}
+    });
 	};
+	
   </script>
+  <!--
 <div id="g_id_onload"
 data-client_id="966381614391-cbnnk9begs973tfj216nn3938k5jr3ur.apps.googleusercontent.com"
-data-context="signin"
+data-context="code"
 data-login_uri="https://main.d1wj00apo7h0ow.amplifyapp.com/oauth2/idpresponse"
 data-auto_select="true"
 data-itp_support="true">
 </div>
 
-
+-->
 
 <!-- This work is licensed under Attribution-NonCommercial-NoDerivatives 4.0 International-->
 </body>
