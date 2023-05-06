@@ -153,7 +153,7 @@ clearStorage();
 function draw() {
 	scroll(0,0)
 	if(buildingInfo !== getItem("buildingInfo")){
-		playerInfo.updateResources();
+	//	playerInfo.updateResources();
 
 
 	}
