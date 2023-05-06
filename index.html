@@ -9,10 +9,16 @@
 	</style>
     <!-- Load the P5.js library -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+
 		<script src="Libraries\p5.clickable.js"></script>
 		<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1368.0.min.js" ></script>
 		<script src="https://accounts.google.com/gsi/client" ></script>
 		
+
+		<script src="Libraries/p5.clickable.js"></script>
+		<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1368.0.min.js" defer></script>
+		<script src="https://accounts.google.com/gsi/client" ></script>
+
 		
 	</head>
 
@@ -32,6 +38,7 @@
 <script src = "Code/Game.js"></script>
 <script src = "Code/buildConfirm.js"></script>
 <script src = "Code/buildingInfo.js"></script>
+
 <script src = "Code/awsTest.js" ></script>
 <script>
       
@@ -60,6 +67,10 @@
 	</script>
 
 <script>hellop = function(a){if(a){let jwt = a.credentials;console.log(parseJwt(jwt))}}</script>
+
+<script src = "Code/awsTest.js" ></script>-->
+<script>hellop = function(a){if(a){console.log(a,"as a")}}</script>
+
 <script>
 	
 	window.onload = function () {
@@ -77,12 +88,16 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 		auto_select: true
 	  });
 	  //google.accounts.id.prompt();
+
 	  /*
+
+
 	  google.accounts.id.prompt((notification) => {
 		if(notification){
       console.log(notification,notification.getMomentType())
 		}
     });
+
 	*/
 	
 	google.accounts.id.renderButton(
@@ -94,6 +109,9 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 	
 	//var jwt = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM5YWZkYTM2ODJlYmYwOWViMzA1NWMxYzRiZDM5Yjc1MWZiZjgxOTUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2ODMyODMzNzksImF1ZCI6Ijk2NjM4MTYxNDM5MS1jYm5uazliZWdzOTczdGZqMjE2bm4zOTM4azVqcjN1ci5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjExNTc3MDg0NzMwMDg4NjYyNjgzNSIsImVtYWlsIjoibWFybXRrMTgxMUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXpwIjoiOTY2MzgxNjE0MzkxLWNibm5rOWJlZ3M5NzN0ZmoyMTZubjM5MzhrNWpyM3VyLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwibmFtZSI6Ik1hcnRpbiBUaG9tYXMiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUdObXl4YThiRDYxY2U0X09adWx2SGVHMVFqVDBZRkNIanlqUm5CRkpkaXExZz1zOTYtYyIsImdpdmVuX25hbWUiOiJNYXJ0aW4iLCJmYW1pbHlfbmFtZSI6IlRob21hcyIsImlhdCI6MTY4MzI4MzY3OSwiZXhwIjoxNjgzMjg3Mjc5LCJqdGkiOiI2YTlkYjBlMDA0OWViMWZkYTJkYTdhNWU5MzY0MGE3NWIyYjUwOTE0In0.LEkN4Fk037WwkJPMGjRNHXDbIvO38BlIDq8gzxrXUOeP0qdOIXKJ2WGzm4YtoNc7remoELc1s3BpXfgDtWt4qzGH9yw5lnO7wlnoujGuXz8Tq9O6bkTCyDcw4r25nZJ6ghX1xCGiSPNleokOGn-p-2q9H_0aJApDlrYIr6mWGfm6UDxt6xlF6Xo4IBKkxvun4Kl_KT8tzVP-FKageeHC2KhY0g0Mq0zAeH0WnNdtyAi8FpiK8pd2WrdKpGwr_thTF9S3RccMSkg7R2Gv53AkRPPW15dfDLqMz48RGuSdlw-cb7Fmn-9WywyGuwfbOrMHUfC7LGYoeByYifsEmOukPQ"
 //console.log(parseJwt(jwt))
+
+
+	};
 
 	
   </script>
