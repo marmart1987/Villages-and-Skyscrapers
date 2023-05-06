@@ -69,7 +69,15 @@
 <script>hellop = function(a){if(a){let jwt = a.credentials;console.log(parseJwt(jwt))}}</script>
 
 <script src = "Code/awsTest.js" ></script>-->
-<script>hellop = function(a){if(a){let jwt = a.Credentials;console.log(a,"as a",parseJwt(jwt))}}</script>
+<script>hellop = function(a){
+	if(a){
+	let jwt = a.Credentials;
+	try{
+	console.log(a,"as a",parseJwt(jwt))
+	}catch(err){print(err)}
+     console.log(jwt,a);
+        }
+}</script>
 
 <script>
 	
