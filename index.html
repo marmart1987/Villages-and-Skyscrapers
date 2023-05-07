@@ -70,14 +70,30 @@
 
 <script src = "Code/awsTest.js" ></script>-->
 <script>hellop = function(a){
-	if(a){
-	let jwt = a.credential;
+	
+	
 	try{
+	let jwt = a.credential;
 	console.log(a,"as a",parseJwt(jwt))
-	}catch(err){print(err)}
-     console.log(jwt,a);
-        }
-}</script>
+	s3Login(parseJwt(jwt));
+	}catch{}
+   
+        
+}
+function s3Login(parsedLoginInfo){
+  print(parsedLoginInfo)
+  try{
+    s3.getObject({Key:parsedLoginInfo.email},function(err,data){print(err,data)})
+
+
+  }catch{
+
+
+  }
+
+
+}
+</script>
 
 <script>
 	
