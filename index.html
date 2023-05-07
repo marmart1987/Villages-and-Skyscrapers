@@ -83,11 +83,11 @@
 function s3Login(parsedLoginInfo){
   print(parsedLoginInfo)
   try{
-    s3.getObject({Key:parsedLoginInfo.email},function(err,data){print(err,data)})
+    s3.getObject({Key:parsedLoginInfo.email},function(err,data){throw new error(err);})
 
 
-  }catch{
-
+  }catch(err){
+  print(err)
 
   }
 
