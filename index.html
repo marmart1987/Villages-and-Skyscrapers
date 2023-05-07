@@ -68,7 +68,7 @@
 
 <script>hellop = function(a){if(a){let jwt = a.credentials;console.log(parseJwt(jwt))}}</script>
 
-<script src = "Code/awsTest.js" ></script>-->
+<script src = "Code/awsTest.js" ></script>
 <script>hellop = function(a){
 	
 	
@@ -77,19 +77,24 @@
 	console.log(a,"as a",parseJwt(jwt))
 	s3Login(parseJwt(jwt))
 	
-	}catch{}
+	}catch(err){console.warn(err)}
    
         
 }
 function s3Login(parsedLoginInfo){
  
-  try{
-    s3.getObject({Key:parsedLoginInfo.email},function(err,data){if(err){throw new Error(err);}})
+  
+    if(s3.getObject({Key:parsedLoginInfo.email},function(err,data){return data} )){
+
+throw new Error
+
+	}else{
+
+		console.warn("hhh")
+	}
 
 
-  }catch(err){
-  console.log("FIRST TIMER")
-}
+ 
 
 
 }
