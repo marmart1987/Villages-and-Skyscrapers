@@ -13,7 +13,7 @@ var s3 = new AWS.S3({
     params: {Bucket: "vandsbucket"}
   });
   console.log(s3)
-
+/*
  s3.listObjects({Bucket:"vandsbucket"},function an(err,data){
     print(err,data)
     for(i = 0; i <data.Contents.length;i++){
