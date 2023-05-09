@@ -31,7 +31,8 @@ p5.prototype.runGUI = function () {
 	cl_lastHovered = null;
 	cl_mouseWasPressed = mouseIsPressed;
 }
-function touchEnded(){
+
+function touchEnded() {
 
 }
 
@@ -59,21 +60,21 @@ function getTextBounds(m, font, size) {
 }
 
 //Button Class
-function Clickable(x,y) {
-	this.x = x;			//X position of the clickable
-	this.y = y;			//Y position of the clickable
-	this.width = 100;		//Width of the clickable
-	this.height = 50;		//Height of the clickable
-	this.color = "#FFFFFF";		//Background color of the clickable
-	this.cornerRadius = 10;		//Corner radius of the clickable
-	this.strokeWeight = 2;		//Stroke width of the clickable
-	this.stroke = "#000000";	//Border color of the clickable
-	this.text = "Press Me";		//Text of the clickable
-	this.textColor = "#000000";	//Color for the text shown
-	this.textSize = 12;		//Size for the text shown
-	this.textFont = "sans-serif";	//Font for the text shown
-	this.textScaled = false;     //Scale the text with the size of the clickable
-	
+function Clickable(x, y) {
+	this.x = x; //X position of the clickable
+	this.y = y; //Y position of the clickable
+	this.width = 100; //Width of the clickable
+	this.height = 50; //Height of the clickable
+	this.color = "#FFFFFF"; //Background color of the clickable
+	this.cornerRadius = 10; //Corner radius of the clickable
+	this.strokeWeight = 2; //Stroke width of the clickable
+	this.stroke = "#000000"; //Border color of the clickable
+	this.text = "Press Me"; //Text of the clickable
+	this.textColor = "#000000"; //Color for the text shown
+	this.textSize = 12; //Size for the text shown
+	this.textFont = "sans-serif"; //Font for the text shown
+	this.textScaled = false; //Scale the text with the size of the clickable
+
 	// image options
 	this.image = null; // image object from p5loadimage()
 	this.fitImage = false; // when true, image will stretch to fill button
@@ -85,8 +86,8 @@ function Clickable(x,y) {
 	this.updateTextSize = function () {
 		if (this.textScaled) {
 			for (let i = this.height; i > 0; i--) {
-				if (getTextBounds(this.text, this.textFont, i)[0] <= this.width
-					&& getTextBounds(this.text, this.textFont, i)[1] <= this.height) {
+				if (getTextBounds(this.text, this.textFont, i)[0] <= this.width &&
+					getTextBounds(this.text, this.textFont, i)[1] <= this.height) {
 					//console.log("textbounds: " + getTextBounds(this.text, this.font, i));
 					//console.log("boxsize: " + this.width + ", " + this.height);
 					this.textSize = i / 2;
@@ -127,34 +128,33 @@ function Clickable(x,y) {
 		this.updateTextSize();
 	}
 
-	this.drawImage = function(){
+	this.drawImage = function () {
 		push();
 		imageMode(CENTER);
 		let centerX = this.x + this.width / 2;
 		let centerY = this.y + this.height / 2;
 		let imgWidth = this.width;
 		let imgHeight = this.height;
-		if(this.fitImage){
+		if (this.fitImage) {
 			let imageAspect = this.image.width / this.image.height;
 			let buttonAspect = this.width / this.height;
-			if(imageAspect > buttonAspect){ // image is wider than button
+			if (imageAspect > buttonAspect) { // image is wider than button
 				imgWidth = this.width;
 				imgHeight = this.height * (buttonAspect / imageAspect);
-			}
-			else{
+			} else {
 				imgWidth = this.width * (imageAspect / buttonAspect);
 				imgHeight = this.height;
 			}
 		}
-		
+
 		image(this.image, centerX, centerY, imgWidth * this.imageScale, imgHeight * this.imageScale);
 
-		if(this.tint && !this.noTint){
+		if (this.tint && !this.noTint) {
 			tint(this.tint)
 		} else {
 			noTint();
 		}
-		if(this.filter){
+		if (this.filter) {
 			filter(this.filter);
 		}
 		pop();
@@ -168,15 +168,15 @@ function Clickable(x,y) {
 		rect(this.x, this.y, this.width, this.height, this.cornerRadius);
 		fill(this.textColor);
 		noStroke();
-		if(this.image){
+		if (this.image) {
 			this.drawImage();
 		}
 		textAlign(CENTER, CENTER);
 		textSize(this.textSize);
 		textFont(this.textFont);
 		text(this.text, this.x + this.width / 2, this.y + this.height / 2);
-		if (mouseX >= this.x && mouseY >= this.y
-			&& mouseX < this.x + this.width && mouseY < this.y + this.height) {
+		if (mouseX >= this.x && mouseY >= this.y &&
+			mouseX < this.x + this.width && mouseY < this.y + this.height) {
 			cl_lastHovered = this;
 			if (mouseIsPressed && !cl_mouseWasPressed)
 				cl_lastClicked = this;
@@ -185,15 +185,14 @@ function Clickable(x,y) {
 	}
 
 	cl_clickables.push(this);
-	 this.hide = function(){
-		
-	  // fill(255);
-	 //  stroke(255);
-	   strokeWeight(this.strokeWeight+1);
-	   erase(255,255);
-	   rect(this.x, this.y, this.width, this.height, this.cornerRadius);
-	   noErase();
-	   this.locate(1000000,1000000);
-	   }
+	this.hide = function () {
+
+		// fill(255);
+		//  stroke(255);
+		strokeWeight(this.strokeWeight + 1);
+		erase(255, 255);
+		rect(this.x, this.y, this.width, this.height, this.cornerRadius);
+		noErase();
+		this.locate(1000000, 1000000);
+	}
 }
-   
