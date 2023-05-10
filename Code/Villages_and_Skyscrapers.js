@@ -72,7 +72,9 @@ function preload() {
 }
 
 function setup() { //Runs on program start
-	
+	let logindiv = createDiv();
+	logindiv.position(windowWidth / 2, windowHeight / 2)
+	logindiv.id("logindiv");
 	AWS.config.region = 'us-east-1'; // Region
 	AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 		IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
@@ -114,6 +116,7 @@ function setup() { //Runs on program start
 				noLoop(); 
 				background(0, 0, 0, 200)
 				logingin = true;
+
 				await s3.getObject({
 					Key: parsedLoginInfo.email + "/startingJWT" + ".txt"
 				}, handleReceived);
@@ -147,6 +150,7 @@ function setup() { //Runs on program start
 						value.then((successMessage) => {
 							playerSave = successMessage
 							console.log(JSON.parse(successMessage), bucketUrl);
+							logindiv.hide()
 							loop();
 							playMenu()
 							logingin = false;
@@ -175,7 +179,7 @@ function setup() { //Runs on program start
 	
 	
 	google.accounts.id.renderButton(
-		document.getElementById("game-holder"), {
+		document.getElementById("logindiv"), {
 			theme: "outline",
 			size: "large",
 			width: windowWidth,
