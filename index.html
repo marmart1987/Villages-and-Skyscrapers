@@ -42,6 +42,7 @@
 
 	<script src="Code/awsTest.js"></script>
 	<script>
+		
 		function parseJwt(token) {
 			/**
 			 * @description Function to decode Google OAuth token
@@ -56,7 +57,7 @@
 				}).join(''));
 			} catch {
 				if (token != undefined) {
-					console.error("Invalid token from Google response: ", token)
+					console.error("Invalid token response from Google : ", token)
 				}
 
 

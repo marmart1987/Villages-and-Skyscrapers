@@ -18,9 +18,12 @@ function playMenu() {
 			game();
 
 		} else if (logingin == false) {
-	
+
 			window.alert("Please login before playing. \n Progress made without logging in will not be saved")
-		} else if(logingin == true) { window.alert("Waiting for login information to arrive.") }
+		}
+		if (logingin == true) {
+			window.alert("Waiting for login information to arrive.")
+		}
 	}
 
 	playButton.text = "Play";
