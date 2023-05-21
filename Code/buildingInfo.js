@@ -9,7 +9,7 @@ function info() {
           Stone: 89
         },
         benifits: function () {
-          playerInfo.production.WoodPH.amount += 10;
+          playerInfo.production.WoodPH.amount += 3600;
         }
       }, {
         name: "Wove Hut",
@@ -25,7 +25,7 @@ function info() {
 
 
     ]
-  
+
 
   ]
 
@@ -35,59 +35,42 @@ function info() {
       Stone: 0
 
     },
-    unroundedResources: {},
+    unroundedResources: {
+      Wood: 0,
+      Stone: 0
+    },
     production: {
       WoodPH: {
         pointer: "Wood",
-        amount: 36001
+        amount: 3600
       },
       StonePH: {
         pointer: "Stone"
+
       },
 
     },
+    lastResourceUpdate: Date.now(),
     updateResources: function () {
-      if (!getItem("buildingInfo")) {
-        let startTime = Date.now();
-        print(startTime);
+
+      // if (playerSave) {
+
+
+      for (let [key, value] of Object.entries(playerInfo.production)) {
+
+
+
+        let resourcesElapsedTime = (Date.now() - playerInfo.lastResourceUpdate) / 1000
+        let amountPerSecond = value.amount / 3600;
+        let amountPerFrame = resourcesElapsedTime * amountPerSecond
+        playerInfo.unroundedResources[value.pointer] += amountPerFrame;
+        playerInfo.resources[value.pointer] = floor(playerInfo.unroundedResources[value.pointer]);
+
       }
-      if (playerInfo == pastProductionInfo) {
-        for (let [key, value] of Object.entries(playerInfo.production)) {
-          clear()
 
-
-          let resourcesElapsedTime = (Date.now() - resourceUpdateTime) / 3600
-          let amountPerSecond = value.amount;
-          print(resourcesElapsedTime)
-
-          //Number( playerInfo.unroundedResources[key]) += 1; 
-          /*
-          playerInfo.unroundedResources[value.pointer]+= amountPerSecond;
-          
-          
-            
-            print(playerInfo.unroundedResources[value.pointer],key)
-            
-           
-            
-            isResourceUpdateDone = true;
-            */
-
-
-
-
-
-
-
-
-        }
-      } else {}
-      Object.assign(pastProductionInfo, playerInfo);
-      print(pastProductionInfo == playerInfo)
-      resourceUpdateTime = Date.now();
-
-
-
+      print(playerInfo.resources, playerInfo.unroundedResources)
+      playerInfo.lastResourceUpdate = Date.now();
+      // }
     },
     initializeProduction: function () {
       for (let [key, value] of Object.entries(playerInfo.production)) {
@@ -100,13 +83,15 @@ function info() {
 
 
       }
-      playerInfo.unroundedResources = playerInfo.resources;
+      playerInfo.unroundedResources = JSON.parse(JSON.stringify(playerInfo.resources));
       print(playerInfo.unroundedResources)
 
 
 
 
-    }
+
+    },
+    playerInfo: Date.now()
 
 
   }

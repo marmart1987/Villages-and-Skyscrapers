@@ -1,10 +1,3 @@
-var TSeconds;
-var TMinutes;
-var THours;
-var savedTimeS;
-var savedTimeM;
-var savedTimeH;
-
 var playButton;
 
 
@@ -22,7 +15,7 @@ var buttonCreator;
 var buttondrawer;
 var buttonHider;
 var buttonPrecreator;
-
+var sectorImages = [];
 
 var buildingCreator;
 var buildingPrecreator;
@@ -30,7 +23,7 @@ var buildingHider;
 var buildingDrawer;
 var buildingButtons = [];
 var buildingButtonsText = [];
-var sectorImages = [];
+
 
 var sector1;
 var update1;
@@ -40,8 +33,8 @@ var activeTimers = [];
 
 
 
-var startTime;
-var resourceUpdateTime = 0;
+
+var resourceUpdateTimer;
 var pastProductionInfo = {};
 var playerSave;
 var logingin = false;
@@ -50,6 +43,7 @@ var postData;
 var s3;
 var lastEvent
 var lastxy
+
 
 
 
@@ -78,6 +72,8 @@ function preload() {
 function setup() { //Runs on program start
 
 	info(); //Defaults player values
+	initializeBuildings(); //Initializes some building values
+	playerInfo.initializeProduction();
 	let logindiv = createDiv();
 	logindiv.position(windowWidth / 2, windowHeight / 2)
 	logindiv.id("logindiv");
@@ -121,7 +117,7 @@ function setup() { //Runs on program start
 		}
 
 	}
-//S	handleCredentials()
+	//S	handleCredentials()
 	async function s3Login(parsedLoginInfo, jwt) {
 
 
@@ -130,7 +126,7 @@ function setup() { //Runs on program start
 		try {
 			if (parsedLoginInfo) {
 				background(0, 0, 0, 200)
-				
+
 				background(0, 0, 0, 200)
 				logingin = true;
 				/*
@@ -257,8 +253,7 @@ function setup() { //Runs on program start
 
 
 
-	initializeBuildings(); //Initializes some building values
-	playerInfo.initializeProduction();
+	
 
 
 
@@ -301,11 +296,11 @@ function setup() { //Runs on program start
 
 	checkTimeout = setInterval(timeout, 1000)
 	postData = setInterval(postDataHandler, 7000);
+	resourceUpdateTimer = setInterval(playerInfo.updateResources, 1000)
 
 
 
 }
-
 
 function postDataHandler() {
 
@@ -400,16 +395,22 @@ function timeout() {
 		lastEvent = Date.now()
 	}
 	if ((Date.now() - lastEvent) / 1000 > 27) {
-		if (postData) { postDataHandler(); console.log("game timed out..."); }
-		
-	
+		if (postData) {
+			postDataHandler();
+			console.log("game timed out...");
+		}
+
+
 		clearInterval(postData);
 		postData = null;
+		clearInterval(resourceUpdateTimer)
+		resourceUpdateTimer = null;
 		noLoop()
 	} else if (!postData) {
 		console.log("game resumed...")
 		postDataHandler()
 		postData = setInterval(postDataHandler, 7000);
+		resourceUpdateTimer = setInterval(playerInfo.updateResources, 1000)
 	}
 
 	lastxy = mouseX + mouseY;
@@ -422,13 +423,12 @@ function createMenu() {
 		creationButtons[buttonCreator].locate(windowWidth / 15 * (buttonCreator + 1), windowHeight / 1.22);
 		creationButtons[buttonCreator].resize(windowWidth / 15, windowWidth / 15);
 		//creationButtons[buttonCreator].text = creationButtonsText[buttonCreator];
-	    creationButtons[buttonCreator].textScaled = true;
+		creationButtons[buttonCreator].textScaled = true;
 		creationButtons[buttonCreator].text = "";
 		creationButtons[buttonCreator].image = sectorImages[buttonCreator];
 
 	}
 }
-
 
 function createMenuMenu(sector) {
 	//buildingInfo[0][0].timestart();
@@ -481,10 +481,6 @@ function createMenuMenu(sector) {
 	}
 	sector1 = sector;
 }
-
-
-
-
 
 function updateBuildings() {
 
