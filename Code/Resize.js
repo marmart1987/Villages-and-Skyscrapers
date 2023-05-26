@@ -5,8 +5,9 @@ function windowResized() {
 		//fullscreen(1);
 		createButton1.hide();
 		resizeCanvas(windowWidth, windowHeight);
-		game();
 		clear();
+		game();
+
 		// hideConfirmButton.hide();
 	} else {
 		resizeCanvas(windowWidth, windowHeight);

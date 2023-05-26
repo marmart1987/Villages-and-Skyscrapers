@@ -1,35 +1,44 @@
 function info() {
-  buildingInfo = [
-    [ //Housing
-      {
+  buildingInfo = {
+    0: { //Housing
+
+
+      0: {
         name: "Woven Hut",
-        time: 1,
+        time: 1000,
         resources: {
           Wood: 10,
           Stone: 89
         },
         benifits: function () {
-          playerInfo.production.WoodPH.amount += 3600;
+          playerInfo.production.WoodPH.amount += 3600000;
         }
-      }, {
+      },
+
+      1: {
         name: "Wove Hut",
-        time: 3,
+        time: 60,
         resources: {
-          Wood: 120,
-          Stone: 849
+          Wood: 1,
+          Stone: 0
         },
-        benifits: function () {}
-      }
+        benifits: function () {
+          playerInfo.production.StonePH.amount += 3600
+        }
+      },
+      length: Object.keys(buildingInfo).length + 1
 
 
 
 
-    ]
+
+    },
 
 
-  ]
+  }
 
   playerInfo = {
+
     resources: {
       Wood: 0,
       Stone: 0
@@ -68,11 +77,13 @@ function info() {
 
       }
 
-      print(playerInfo.resources, playerInfo.unroundedResources)
+      console.log(playerInfo.resources, playerInfo.unroundedResources)
       playerInfo.lastResourceUpdate = Date.now();
       // }
     },
     initializeProduction: function () {
+      console.error(buildingInfo.length)
+
       for (let [key, value] of Object.entries(playerInfo.production)) {
         if (!playerInfo.production[key].amount) {
           Object.defineProperty(playerInfo.production[key], "amount", {
@@ -84,7 +95,7 @@ function info() {
 
       }
       playerInfo.unroundedResources = JSON.parse(JSON.stringify(playerInfo.resources));
-      print(playerInfo.unroundedResources)
+      console.log(playerInfo.unroundedResources)
 
 
 
@@ -101,100 +112,74 @@ function info() {
 }
 
 addBuildings = function (amount, section, order) {
-  //  identifier = random(1, 10000000000000000);
+
   buildingInfo[section][order].timer = new startTimer(buildingInfo[section][order].time, section, order, amount);
 
-  print(activeTimers + "start");
+  console.log(activeTimers + "started");
 
 }
 
 function startTimer(timeS, section, order, amount) {
-  print(info);
+  console.log(info);
   for (i = 0; i < Object.values(buildingInfo[section][order].resources).length; i++) {
 
     if (Object.getOwnPropertyDescriptor(playerInfo.resources, Object.keys(buildingInfo[section][order].resources)[i])) {
 
 
-      print(i)
+      console.log(i)
       let p = Object.getOwnPropertyDescriptor(playerInfo.resources, Object.keys(buildingInfo[section][order].resources)[i]);
       let l = p.value - Object.values(buildingInfo[section][order].resources)[i];
       Object.defineProperty(playerInfo.resources, Object.keys(buildingInfo[section][order].resources)[i], {
         value: l
       });
-      print(playerInfo)
+      console.log(playerInfo)
 
     } else {
       console.error("Material doesn't exist" + " : '" + Object.keys(buildingInfo[section][order].resources)[i] + "'. If issue persists contact developer.");
-      //Object.keys(buildingInfo[section][order].resources)
+
     }
 
 
   }
 
-  print(info);
+  console.log(info);
   this.startTime = Date.now() / 1000;
+  this.timeS = timeS;
+  this.section = section;
+  this.order = order;
+  this.amount = amount;
 
   activeTimers.push(this);
-  print(this);
-  // section = section;
-  // order = order;
-  // time = timeS;
 
-  //identifier = identifier;
-  // amount = amount;
-
-  //print(this.identifier);
-  //print(startTimer);
-  this.done = false;
+}
 
 
+timerFinished = function (arNum) {
+
+  console.log(activeTimers, "finished");
+  buildingInfo[activeTimers[arNum].section][activeTimers[arNum].order].amount += activeTimers[arNum].amount;
+
+  if (buildingInfo[activeTimers[arNum].section][activeTimers[arNum].order].benifits()) {
+    buildingInfo[activeTimers[arNum].section][activeTimers[arNum].order].benifits();
+  }
+  activeTimers.splice(arNum, 1);
 
 
 
-  //this.check = function(element) { element.identifier != identifier;}
-  this.timerUpdate = function (arNum) {
-    //activeTimers[arNum] = this;
 
-    this.elapsedTime = (Date.now() / 1000) - this.startTime;
-    print(this.elapsedTime + ";;;;;;;;;;" + timeS + "!!!!!" + arNum + "???" + buildingInfo[section][order].amount)
-    if (this.elapsedTime > timeS) {
-      this.timerFinished(arNum);
+}
 
 
-    }
+timerUpdate = function (arNum) {
 
+
+  activeTimers[arNum].elapsedTime = (Date.now() / 1000) - activeTimers[arNum].startTime;
+  if (activeTimers[arNum].elapsedTime > activeTimers[arNum].timeS) {
+
+    timerFinished(arNum);
 
 
   }
-  //print(Date.now());
-
-
-  this.timerFinished = function (arNum) {
-
-
-    // activeTimers.pop();
-    //activeTimers = activeTimers.filter(this.check);
-    activeTimers.splice(arNum, 1);
-    //
-    print(activeTimers);
-    //print("identifier:  "+this.identifier);
-    buildingInfo[section][order].amount += amount;
-
-
-    print("!!!!!!!!!!!   " + buildingInfo[section][order].amount);
-    if (buildingInfo[section][order].benifits()) {
-      buildingInfo[section][order].benifits();
-    }
-
-    //clear(); 
-
-
-
-
-  }
-
-
-
 }
 
 function defaultsDeep(target, defaults) {
@@ -220,18 +205,19 @@ function defaultsDeep(target, defaults) {
 
 
 initializeBuildings = function () {
+  buildingInfo.length = Object.keys(buildingInfo).length;
+  console.error(buildingInfo.length)
+
   for (let i = 0; i < buildingInfo.length; i++) {
+    buildingInfo[i].length = Object.keys(buildingInfo[i]).length - 1
+    console.log(buildingInfo[i])
+
 
     for (let j = 0; j < buildingInfo[i].length; j++) {
       //run for each building
       buildingInfo[i][j].amount = 0;
 
     }
-
-
-
-
-
-
   }
+
 }

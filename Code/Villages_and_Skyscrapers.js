@@ -78,10 +78,8 @@ function setup() { //Runs on program start
 	logindiv.position(windowWidth / 2, windowHeight / 2)
 	logindiv.id("logindiv");
 	AWS.config.region = 'us-east-1';
-	var cognitoidentity = new AWS.CognitoIdentity({
-		apiVersion: '2014-06-30'
-	}); // Region
-	let cognitoID;
+
+
 	AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 		//	IdentityId: cognitoID,
 		IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
@@ -106,8 +104,8 @@ function setup() { //Runs on program start
 	handleCredentials = function (response) {
 		try {
 
-			let credentials = response.credential;
-			//credentials = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM5YWZkYTM2ODJlYmYwOWViMzA1NWMxYzRiZDM5Yjc1MWZiZjgxOTUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2ODMyODMzNzksImF1ZCI6Ijk2NjM4MTYxNDM5MS1jYm5uazliZWdzOTczdGZqMjE2bm4zOTM4azVqcjN1ci5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjExNTc3MDg0NzMwMDg4NjYyNjgzNSIsImVtYWlsIjoibWFybXRrMTgxMUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXpwIjoiOTY2MzgxNjE0MzkxLWNibm5rOWJlZ3M5NzN0ZmoyMTZubjM5MzhrNWpyM3VyLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwibmFtZSI6Ik1hcnRpbiBUaG9tYXMiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUdObXl4YThiRDYxY2U0X09adWx2SGVHMVFqVDBZRkNIanlqUm5CRkpkaXExZz1zOTYtYyIsImdpdmVuX25hbWUiOiJNYXJ0aW4iLCJmYW1pbHlfbmFtZSI6IlRob21hcyIsImlhdCI6MTY4MzI4MzY3OSwiZXhwIjoxNjgzMjg3Mjc5LCJqdGkiOiI2YTlkYjBlMDA0OWViMWZkYTJkYTdhNWU5MzY0MGE3NWIyYjUwOTE0In0.LEkN4Fk037WwkJPMGjRNHXDbIvO38BlIDq8gzxrXUOeP0qdOIXKJ2WGzm4YtoNc7remoELc1s3BpXfgDtWt4qzGH9yw5lnO7wlnoujGuXz8Tq9O6bkTCyDcw4r25nZJ6ghX1xCGiSPNleokOGn-p-2q9H_0aJApDlrYIr6mWGfm6UDxt6xlF6Xo4IBKkxvun4Kl_KT8tzVP-FKageeHC2KhY0g0Mq0zAeH0WnNdtyAi8FpiK8pd2WrdKpGwr_thTF9S3RccMSkg7R2Gv53AkRPPW15dfDLqMz48RGuSdlw-cb7Fmn-9WywyGuwfbOrMHUfC7LGYoeByYifsEmOukPQ"
+			//let credentials = response.credential;
+			credentials = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM5YWZkYTM2ODJlYmYwOWViMzA1NWMxYzRiZDM5Yjc1MWZiZjgxOTUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2ODMyODMzNzksImF1ZCI6Ijk2NjM4MTYxNDM5MS1jYm5uazliZWdzOTczdGZqMjE2bm4zOTM4azVqcjN1ci5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjExNTc3MDg0NzMwMDg4NjYyNjgzNSIsImVtYWlsIjoibWFybXRrMTgxMUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXpwIjoiOTY2MzgxNjE0MzkxLWNibm5rOWJlZ3M5NzN0ZmoyMTZubjM5MzhrNWpyM3VyLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwibmFtZSI6Ik1hcnRpbiBUaG9tYXMiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUdObXl4YThiRDYxY2U0X09adWx2SGVHMVFqVDBZRkNIanlqUm5CRkpkaXExZz1zOTYtYyIsImdpdmVuX25hbWUiOiJNYXJ0aW4iLCJmYW1pbHlfbmFtZSI6IlRob21hcyIsImlhdCI6MTY4MzI4MzY3OSwiZXhwIjoxNjgzMjg3Mjc5LCJqdGkiOiI2YTlkYjBlMDA0OWViMWZkYTJkYTdhNWU5MzY0MGE3NWIyYjUwOTE0In0.LEkN4Fk037WwkJPMGjRNHXDbIvO38BlIDq8gzxrXUOeP0qdOIXKJ2WGzm4YtoNc7remoELc1s3BpXfgDtWt4qzGH9yw5lnO7wlnoujGuXz8Tq9O6bkTCyDcw4r25nZJ6ghX1xCGiSPNleokOGn-p-2q9H_0aJApDlrYIr6mWGfm6UDxt6xlF6Xo4IBKkxvun4Kl_KT8tzVP-FKageeHC2KhY0g0Mq0zAeH0WnNdtyAi8FpiK8pd2WrdKpGwr_thTF9S3RccMSkg7R2Gv53AkRPPW15dfDLqMz48RGuSdlw-cb7Fmn-9WywyGuwfbOrMHUfC7LGYoeByYifsEmOukPQ"
 			console.log(response)
 
 			s3Login(parseJwt(credentials), response)
@@ -117,7 +115,7 @@ function setup() { //Runs on program start
 		}
 
 	}
-	//S	handleCredentials()
+	handleCredentials()
 	async function s3Login(parsedLoginInfo, jwt) {
 
 
@@ -154,7 +152,7 @@ function setup() { //Runs on program start
 					
 
 
-					print(AWS.config.credentials)
+					console.log(AWS.config.credentials)
 				});
 
 					*/
@@ -166,7 +164,7 @@ function setup() { //Runs on program start
 					//err = { code : "NoSuchKey" }
 					if (err) {
 						if (err.code === "NoSuchKey") {
-							print("first time")
+							console.log("first time")
 							userInfo = {
 								email: parsedLoginInfo.email,
 								firstLoginTime: parsedLoginInfo.iat,
@@ -199,7 +197,7 @@ function setup() { //Runs on program start
 
 
 					} else {
-						print("not first login")
+						console.log("not first login")
 						var href = this.request.httpRequest.endpoint.href;
 
 						bucketUrl = href + "vandsbucket" + "/" + parsedLoginInfo.email + "/data" + ".txt"
@@ -207,9 +205,14 @@ function setup() { //Runs on program start
 
 
 						value.then((successMessage) => {
-							playerSave = JSON.parse(successMessage)
+							//playerSave = JSON.parse(successMessage)
 							console.log(JSON.parse(successMessage), bucketUrl);
 							userInfo = JSON.parse(successMessage)
+							playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
+							buildingInfo = defaultsDeep(userInfo.buildingInfo, buildingInfo)
+
+							activeTimers = defaultsDeep(userInfo.activeTimers, activeTimers) || []
+							console.log(activeTimers)
 							logindiv.hide()
 							loop();
 							playMenu()
@@ -222,7 +225,7 @@ function setup() { //Runs on program start
 			}
 
 		} catch (e) {
-			print(e)
+			console.log(e)
 		}
 
 
@@ -253,7 +256,7 @@ function setup() { //Runs on program start
 
 
 
-	
+
 
 
 
@@ -290,9 +293,9 @@ function setup() { //Runs on program start
 
 	playMenu(); //display the main menu
 
-	//if(getItem("buildingInfo")){buildingInfo = getItem("buildingInfo");print("saved");} //get the saved values
+	//if(getItem("buildingInfo")){buildingInfo = getItem("buildingInfo");console.log("saved");} //get the saved values
 
-	print(buildingInfo);
+	console.log(buildingInfo);
 
 	checkTimeout = setInterval(timeout, 1000)
 	postData = setInterval(postDataHandler, 7000);
@@ -304,7 +307,7 @@ function setup() { //Runs on program start
 
 function postDataHandler() {
 
-	if (playerSave) {
+	if (userInfo) {
 		userInfo = {
 
 			email: userInfo.email,
@@ -334,6 +337,8 @@ function postDataHandler() {
 
 
 
+	} else {
+		console.log("not loggedin")
 	}
 
 }
@@ -374,12 +379,11 @@ function draw() {
 
 	}
 
-	//buildingInfo[0][0].timer.updateTimer()
-	//let buildingEditor = new buildings();
-	//buildingEditor.add(1,0,0);
+
 	for (let i = 0; i < activeTimers.length; i++) {
-		activeTimers[i].timerUpdate(i);
-		//print(activeTimers[i]);
+		timerUpdate(i);
+
+
 	}
 
 
@@ -411,6 +415,7 @@ function timeout() {
 		postDataHandler()
 		postData = setInterval(postDataHandler, 7000);
 		resourceUpdateTimer = setInterval(playerInfo.updateResources, 1000)
+		loop()
 	}
 
 	lastxy = mouseX + mouseY;
@@ -434,14 +439,14 @@ function createMenuMenu(sector) {
 	//buildingInfo[0][0].timestart();
 
 	//let buildingMenuName = creationButtonsText[sector];
-	//print(buildingMenuName);
+	//console.log(buildingMenuName);
 
 
 	if (sector !== sector1) {
 		buildingButtonsText = [];
 		//for(let ii = 0; ii < buildingButtonsText.length; ii++){
 		//buildingButtonsText[ii] = undefined;
-		// print(buildingButtonsText+" blahblahblah");
+		// console.log(buildingButtonsText+" blahblahblah");
 		// }
 
 		for (let i = 0; i < buildingInfo[sector].length; i++) {
@@ -450,7 +455,7 @@ function createMenuMenu(sector) {
 			buildingButtonsText[i] = buildingInfo[sector][i].name;
 
 
-			// print(buildingButtonsText);
+			// console.log(buildingButtonsText);
 
 			updateBuildings();
 		}
@@ -475,8 +480,8 @@ function createMenuMenu(sector) {
 		buildingButtons[buildingCreator].locate(windowWidth / 15 * (buildingCreator + 1), windowHeight / 1.22 - windowWidth / 15);
 		buildingButtons[buildingCreator].resize(windowWidth / 15, windowWidth / 15);
 		buildingButtons[buildingCreator].text = buildingButtonsText[buildingCreator];
-		buildingButtons[buildingCreator].textScaled = true;
-		//print (buildingButtonsText+",");
+		buildingButtons[buildingCreator].textSize = windowWidth / 18;
+		//console.log (buildingButtonsText+",");
 
 	}
 	sector1 = sector;
@@ -503,6 +508,14 @@ function updateBuildings() {
 
 
 
+
+
+}
+
+function mousePressed() {
+	if (confirming) {
+		hideConfirm()
+	}
 
 
 }

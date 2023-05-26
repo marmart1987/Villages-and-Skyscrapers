@@ -10,7 +10,7 @@ function playMenu() {
 	playButton.resize(windowWidth / 5, windowHeight / 7);
 
 	playButton.onPress = function () {
-		if (playerSave) {
+		if (userInfo) {
 			playButton.locate(100000000000000, 1000000000000000);
 			playButton.resize(0, 0);
 
@@ -19,7 +19,13 @@ function playMenu() {
 
 		} else if (logingin == false) {
 
-			window.alert("Please login before playing. \n Progress made without logging in will not be saved")
+			if (window.confirm("Please login before playing. \n Progress made without logging in will not be saved. Continue anyway?")) {
+				playButton.locate(100000000000000, 1000000000000000);
+				playButton.resize(0, 0);
+
+				clear();
+				game();
+			}
 		}
 		if (logingin == true) {
 			window.alert("Waiting for login information to arrive.")

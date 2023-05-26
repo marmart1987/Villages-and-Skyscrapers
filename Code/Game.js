@@ -41,4 +41,4 @@ function game() {
 
 	strokeWeight(5);
 	line(0, windowHeight / 10, windowWidth, windowHeight / 10);
-} 
+}
