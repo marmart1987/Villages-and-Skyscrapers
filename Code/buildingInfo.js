@@ -1,38 +1,32 @@
-function info() {
+
   buildingInfo = {
-    0: { //Housing
+    0: { //Production
 
 
       0: {
-        name: "Woven Hut",
-        time: 1000,
+        name: "Woodcutter",
+        time: 100,
         resources: {
-          Wood: 10,
-          Stone: 89
+          Wood: 100,
+          
         },
         benifits: function () {
-          playerInfo.production.WoodPH.amount += 3600000;
+          playerInfo.production.WoodPH.amount += 360;
         }
-      },
-
-      1: {
-        name: "Wove Hut",
-        time: 60,
+      }, 1: {
+        name: "Woodcutter",
+        time: 100,
         resources: {
-          Wood: 1,
-          Stone: 0
+          Wood: 100,
+          
         },
         benifits: function () {
-          playerInfo.production.StonePH.amount += 3600
+          playerInfo.production.WoodPH.amount += 360;
         }
       },
-      length: Object.keys(buildingInfo).length + 1
-
-
-
-
-
-    },
+      2:{name:"woonknk"}
+    
+      },
 
 
   }
@@ -109,7 +103,7 @@ function info() {
 
 
 
-}
+
 
 addBuildings = function (amount, section, order) {
 
@@ -120,7 +114,7 @@ addBuildings = function (amount, section, order) {
 }
 
 function startTimer(timeS, section, order, amount) {
-  console.log(info);
+ 
   for (i = 0; i < Object.values(buildingInfo[section][order].resources).length; i++) {
 
     if (Object.getOwnPropertyDescriptor(playerInfo.resources, Object.keys(buildingInfo[section][order].resources)[i])) {
@@ -142,12 +136,13 @@ function startTimer(timeS, section, order, amount) {
 
   }
 
-  console.log(info);
+  
   this.startTime = Date.now() / 1000;
   this.timeS = timeS;
   this.section = section;
   this.order = order;
   this.amount = amount;
+  this.humanReadableName = buildingInfo[section][order].name;
 
   activeTimers.push(this);
 
@@ -209,7 +204,7 @@ initializeBuildings = function () {
   console.error(buildingInfo.length)
 
   for (let i = 0; i < buildingInfo.length; i++) {
-    buildingInfo[i].length = Object.keys(buildingInfo[i]).length - 1
+    buildingInfo[i].length = Object.keys(buildingInfo[i]).length
     console.log(buildingInfo[i])
 
 

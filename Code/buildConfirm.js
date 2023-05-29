@@ -1,7 +1,7 @@
 function BuildConfirm(BuildingNo, sector) {
   confirming = true;
 
-  //console.log(BuildingNo+","+sector);
+ 
   strokeWeight(10);
 
   for (buildingHider = 0; buildingHider < buildingInfo.length; buildingHider++) {

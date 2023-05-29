@@ -25,8 +25,9 @@ function game() {
 
 			for (let update = 0; update < buildingButtonsText.length; update++) {
 				buildingButtons[update].onPress = function () {
-
-					BuildConfirm(update, updatee);
+					try {
+						BuildConfirm(update, updatee);
+					}catch(err){console.warn(err)}
 
 
 

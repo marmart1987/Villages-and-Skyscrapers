@@ -1,39 +1,25 @@
 var playButton;
-
-
-
-//test2
 var gaming;
 var confirming;
-
 var createButton1;
 var hideConfirmButton;
-
 var creationButtons = [];
-//var creationButtonsText = ["Housing","Food", "Resources","Safety","Water","Healthcare","Recreation"];
 var buttonCreator;
 var buttondrawer;
 var buttonHider;
 var buttonPrecreator;
 var sectorImages = [];
-
 var buildingCreator;
 var buildingPrecreator;
 var buildingHider;
 var buildingDrawer;
 var buildingButtons = [];
 var buildingButtonsText = [];
-
-
 var sector1;
 var update1;
 var buildingInfo = [];
 var playerInfo;
 var activeTimers = [];
-
-
-
-
 var resourceUpdateTimer;
 var pastProductionInfo = {};
 var playerSave;
@@ -43,8 +29,6 @@ var postData;
 var s3;
 var lastEvent
 var lastxy
-
-
 
 
 
@@ -68,44 +52,113 @@ function preload() {
 
 
 }
+//Preload images and other stuff
+function setup() {
+	function returnLogin() {
+		
+		function loginRecieved(err) {
+			
 
-function setup() { //Runs on program start
+			if (err) {
+				return;
+			} else {
+				let href = this.request.httpRequest.endpoint.href;
 
-	info(); //Defaults player values
+				let bucketUrl = href + "vandsbucket" + "/" + getItem("Email") + "/data" + ".txt"
+				let value = httpGet(bucketUrl, "text")
+
+
+				value.then((successMessage) => {
+					let info = JSON.parse(successMessage);
+					print(info)
+
+					//print( == getItem("Identifier") && info.password == getItem("Password"))
+					if (info.identifier == getItem("Identifier") && info.password == getItem("Password")) {
+						console.log("dine")
+						userInfo = JSON.parse(successMessage)
+						playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
+						buildingInfo = defaultsDeep(userInfo.buildingInfo, buildingInfo)
+						activeTimers = defaultsDeep(userInfo.activeTimers, activeTimers) || []
+						logindiv.hide()
+						return;
+
+
+					} else {
+						
+						print("imposta!")
+					}
+
+
+
+				})
+			}
+
+			/*
+if (
+	getItem("Passsword") == 
+	getItem("Email")
+	getItem("Identifier")
+
+
+)
+*/
+
+
+		}
+		s3.getObject({
+			Key: getItem("Email") + "/data.txt"
+		}, loginRecieved)
+
+	}
+
+
+
+	function generateId(len) {
+		var arr = new Uint8Array((len || 40) / 2)
+		window.crypto.getRandomValues(arr)
+		return Array.from(arr, function (dec) {
+			return dec.toString(16).padStart(2, "0")
+		}).join('')
+	}
+
+
+
+
+
+
+
+
+
 	initializeBuildings(); //Initializes some building values
-	playerInfo.initializeProduction();
-	let logindiv = createDiv();
+	playerInfo.initializeProduction(); // Initializes resource generation
+
+
+	let logindiv = createDiv(); // Div for Google sign-in
 	logindiv.position(windowWidth / 2, windowHeight / 2)
 	logindiv.id("logindiv");
+
+
 	AWS.config.region = 'us-east-1';
-
-
 	AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-		//	IdentityId: cognitoID,
-		IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
-		//LoginId: parsedLoginInfo.email,
 
-	});
+		IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
+	}); //Get AWS Credentials
+
 	s3 = new AWS.S3({
 		apiVersion: '2006-03-01',
 		params: {
 			Bucket: "vandsbucket"
 
 		}
-	});
-
-
-
-
-
-
+	}); //Get AWS S3 setup
+	returnLogin()
 
 
 	handleCredentials = function (response) {
 		try {
 
-			//let credentials = response.credential;
-			credentials = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM5YWZkYTM2ODJlYmYwOWViMzA1NWMxYzRiZDM5Yjc1MWZiZjgxOTUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2ODMyODMzNzksImF1ZCI6Ijk2NjM4MTYxNDM5MS1jYm5uazliZWdzOTczdGZqMjE2bm4zOTM4azVqcjN1ci5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjExNTc3MDg0NzMwMDg4NjYyNjgzNSIsImVtYWlsIjoibWFybXRrMTgxMUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXpwIjoiOTY2MzgxNjE0MzkxLWNibm5rOWJlZ3M5NzN0ZmoyMTZubjM5MzhrNWpyM3VyLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwibmFtZSI6Ik1hcnRpbiBUaG9tYXMiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUdObXl4YThiRDYxY2U0X09adWx2SGVHMVFqVDBZRkNIanlqUm5CRkpkaXExZz1zOTYtYyIsImdpdmVuX25hbWUiOiJNYXJ0aW4iLCJmYW1pbHlfbmFtZSI6IlRob21hcyIsImlhdCI6MTY4MzI4MzY3OSwiZXhwIjoxNjgzMjg3Mjc5LCJqdGkiOiI2YTlkYjBlMDA0OWViMWZkYTJkYTdhNWU5MzY0MGE3NWIyYjUwOTE0In0.LEkN4Fk037WwkJPMGjRNHXDbIvO38BlIDq8gzxrXUOeP0qdOIXKJ2WGzm4YtoNc7remoELc1s3BpXfgDtWt4qzGH9yw5lnO7wlnoujGuXz8Tq9O6bkTCyDcw4r25nZJ6ghX1xCGiSPNleokOGn-p-2q9H_0aJApDlrYIr6mWGfm6UDxt6xlF6Xo4IBKkxvun4Kl_KT8tzVP-FKageeHC2KhY0g0Mq0zAeH0WnNdtyAi8FpiK8pd2WrdKpGwr_thTF9S3RccMSkg7R2Gv53AkRPPW15dfDLqMz48RGuSdlw-cb7Fmn-9WywyGuwfbOrMHUfC7LGYoeByYifsEmOukPQ"
+			let credentials = response.credential;
+
 			console.log(response)
 
 			s3Login(parseJwt(credentials), response)
@@ -115,8 +168,8 @@ function setup() { //Runs on program start
 		}
 
 	}
-	handleCredentials()
-	async function s3Login(parsedLoginInfo, jwt) {
+
+	async function s3Login(parsedLoginInfo) {
 
 
 
@@ -127,50 +180,26 @@ function setup() { //Runs on program start
 
 				background(0, 0, 0, 200)
 				logingin = true;
-				/*
-				await cognitoidentity.getId({
-					IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9'
-				}, async function (err, data) {
-					if (err) console.log(err, err.stack); // an error occurred
-					console.log(data)
-					cognitoID = data.IdentityId; // successful response
 
-					/*
-										AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-											IdentityId: cognitoID,
-											IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
-											LoginId: parsedLoginInfo.email,
-
-										});
-										s3 = new AWS.S3({
-											apiVersion: '2006-03-01',
-											params: {
-												Bucket: "vandsbucket"
-
-											}
-										});
-					
-
-
-					console.log(AWS.config.credentials)
-				});
-
-					*/
 				await s3.getObject({
 					Key: parsedLoginInfo.email + "/data.txt"
 				}, handleReceived);
 
-				function handleReceived(err) {
-					//err = { code : "NoSuchKey" }
+				async function handleReceived(err) {
+
 					if (err) {
 						if (err.code === "NoSuchKey") {
 							console.log("first time")
 							userInfo = {
+								identifier:  generateId(100),
+								password:  generateId(100),
 								email: parsedLoginInfo.email,
 								firstLoginTime: parsedLoginInfo.iat,
 								playerInfo: playerInfo,
 								buildingInfo: buildingInfo,
-								activeTimers: activeTimers
+								activeTimers: activeTimers,
+
+
 
 
 							}
@@ -181,6 +210,14 @@ function setup() { //Runs on program start
 							}, function (err, data) {
 								if (err) {
 									console.log(err)
+								} else {
+									storeItem("Identifier", userInfo.identifier)
+									storeItem("Password", userInfo.password)
+									storeItem("Email", userInfo.email)
+
+
+
+
 								}
 
 								logindiv.hide()
@@ -205,11 +242,14 @@ function setup() { //Runs on program start
 
 
 						value.then((successMessage) => {
-							//playerSave = JSON.parse(successMessage)
+
 							console.log(JSON.parse(successMessage), bucketUrl);
 							userInfo = JSON.parse(successMessage)
 							playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
 							buildingInfo = defaultsDeep(userInfo.buildingInfo, buildingInfo)
+							storeItem("Identifier", userInfo.identifier)
+							storeItem("Password", userInfo.password)
+							storeItem("Email", userInfo.email)
 
 							activeTimers = defaultsDeep(userInfo.activeTimers, activeTimers) || []
 							console.log(activeTimers)
@@ -234,11 +274,14 @@ function setup() { //Runs on program start
 		return;
 
 	}
+
+	// Get response from Google. Use response to get user's info.
+
 	google.accounts.id.initialize({
 		client_id: '966381614391-cbnnk9begs973tfj216nn3938k5jr3ur.apps.googleusercontent.com',
 		callback: handleCredentials,
 		auto_select: true
-	});
+	}); //Initialize Google 
 
 
 	google.accounts.id.renderButton(
@@ -247,23 +290,10 @@ function setup() { //Runs on program start
 			size: "large",
 			width: windowWidth,
 			click_listener: handleCredentials
-		} // customization attributes
+		} // Render sign in button with Google.
 	);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-	buildingButtonsText = ["error"]; //If buttons aren't updated, this will appear
+	buildingButtonsText = ["error"]; //If there an error, this will appear
 
 
 
@@ -293,17 +323,16 @@ function setup() { //Runs on program start
 
 	playMenu(); //display the main menu
 
-	//if(getItem("buildingInfo")){buildingInfo = getItem("buildingInfo");console.log("saved");} //get the saved values
-
-	console.log(buildingInfo);
-
+	//Checks every second if it should freeze the game.
 	checkTimeout = setInterval(timeout, 1000)
+	//Save user's data to cloud
 	postData = setInterval(postDataHandler, 7000);
+	//Update the player's resources every second
 	resourceUpdateTimer = setInterval(playerInfo.updateResources, 1000)
 
 
-
 }
+//Runs on program start
 
 function postDataHandler() {
 
@@ -342,52 +371,46 @@ function postDataHandler() {
 	}
 
 }
+//Posts data to cloud
 
 function draw() {
-	//dscroll(0, 0)
+	function drawButtons() {
+		playButton.draw();
+		createButton1.draw();
 
-	if (buildingInfo !== getItem("buildingInfo")) {
-		//	playerInfo.updateResources();
-
-
-	}
-
-	//	storeItem("buildingInfo", buildingInfo);
-
-
-	playButton.draw();
-	createButton1.draw();
-
-	for (buttondrawer = 0; buttondrawer < buildingInfo.length; buttondrawer++) {
-		creationButtons[buttondrawer].draw();
-	}
-
-	for (buildingDrawer = 0; buildingDrawer < buildingButtonsText.length; buildingDrawer++) {
-		buildingButtons[buildingDrawer].draw();
-	}
-
-
-	if (mouseY < windowHeight / 1.22 - windowWidth / 15 && gaming == true) {
-		for (buttonHider = 0; buttonHider < buildingInfo.length; buttonHider++) {
-			creationButtons[buttonHider].hide();
+		for (buttondrawer = 0; buttondrawer < buildingInfo.length; buttondrawer++) {
+			creationButtons[buttondrawer].draw();
 		}
-		for (buildingHider = 0; buildingHider < buildingButtonsText.length; buildingHider++) {
-			buildingButtons[buildingHider].hide();
+
+		for (buildingDrawer = 0; buildingDrawer < buildingButtonsText.length; buildingDrawer++) {
+			buildingButtons[buildingDrawer].draw();
 		}
 
 
+		if (mouseY < windowHeight / 1.22 - windowWidth / 15 && gaming == true) {
+			for (buttonHider = 0; buttonHider < buildingInfo.length; buttonHider++) {
+				creationButtons[buttonHider].hide();
+			}
+			for (buildingHider = 0; buildingHider < buildingButtonsText.length; buildingHider++) {
+				buildingButtons[buildingHider].hide();
+			}
 
+
+
+		}
 	}
+	drawButtons()
+	//Update buttons
 
 
 	for (let i = 0; i < activeTimers.length; i++) {
 		timerUpdate(i);
-
-
 	}
+	//Update timers for constructing buildings.
 
 
 }
+//Runs every frame
 
 function timeout() {
 
@@ -422,6 +445,7 @@ function timeout() {
 
 
 }
+//Timeout game after around 30 seconds
 
 function createMenu() {
 	for (buttonCreator = 0; buttonCreator < buildingInfo.length; buttonCreator++) {
@@ -434,83 +458,43 @@ function createMenu() {
 
 	}
 }
+//Create menu for sectors of buildings
 
 function createMenuMenu(sector) {
-	//buildingInfo[0][0].timestart();
-
-	//let buildingMenuName = creationButtonsText[sector];
-	//console.log(buildingMenuName);
-
-
 	if (sector !== sector1) {
 		buildingButtonsText = [];
-		//for(let ii = 0; ii < buildingButtonsText.length; ii++){
-		//buildingButtonsText[ii] = undefined;
-		// console.log(buildingButtonsText+" blahblahblah");
-		// }
 
 		for (let i = 0; i < buildingInfo[sector].length; i++) {
-
-
 			buildingButtonsText[i] = buildingInfo[sector][i].name;
-
-
-			// console.log(buildingButtonsText);
-
 			updateBuildings();
 		}
-
-
-
-
-
-
-
-
-
 	}
-
-
-
-
-
 
 	for (buildingCreator = 0; buildingCreator < buildingButtonsText.length; buildingCreator++) {
 
 		buildingButtons[buildingCreator].locate(windowWidth / 15 * (buildingCreator + 1), windowHeight / 1.22 - windowWidth / 15);
 		buildingButtons[buildingCreator].resize(windowWidth / 15, windowWidth / 15);
 		buildingButtons[buildingCreator].text = buildingButtonsText[buildingCreator];
-		buildingButtons[buildingCreator].textSize = windowWidth / 18;
-		//console.log (buildingButtonsText+",");
-
+		buildingButtons[buildingCreator].textSize = windowWidth / (buildingButtonsText[buildingCreator].length * 9)
+		console.log(buildingButtonsText[buildingCreator].length)
 	}
 	sector1 = sector;
 }
 
+//Creates menu for buildings inside chosen sector.
 function updateBuildings() {
 
 	for (buildingCreator = 0; buildingButtons[buildingCreator] !== undefined; buildingCreator++) {
 		buildingButtons[buildingCreator].hide();
-		//buildingButtons[1] = undefined;
 
 	}
-
-
-
-
 
 	for (buildingPrecreator = 0; buildingPrecreator < buildingButtonsText.length; buildingPrecreator++) {
 		buildingButtons[buildingPrecreator] = new Clickable();
-		//buildingButtons[buildingPrecreator].locate(100000,100000);
-		//if(buildingButtonsText[buildingPrecreator] == null){buildingButtons[buildingPrecreator].hide();}
 
 	}
-
-
-
-
-
 }
+//Updates menu
 
 function mousePressed() {
 	if (confirming) {
@@ -519,3 +503,4 @@ function mousePressed() {
 
 
 }
+//Runs on mouse press.
