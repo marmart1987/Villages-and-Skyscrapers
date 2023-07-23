@@ -109,7 +109,7 @@ addBuildings = function (amount, section, order) {
 
   buildingInfo[section][order].timer = new startTimer(buildingInfo[section][order].time, section, order, amount);
 
-  console.log(activeTimers + "started");
+  console.log(activeTimers,"started");
 
 }
 

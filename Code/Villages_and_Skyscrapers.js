@@ -29,6 +29,8 @@ var postData;
 var s3;
 var lastEvent
 var lastxy
+var IPAddress
+var loginDiv
 
 
 
@@ -52,12 +54,19 @@ function preload() {
 
 
 }
+
+function getIP(ip) {
+	IPAddress = ip.ip;
+	console.log(IPAddress)
+}
 //Preload images and other stuff
 function setup() {
+
+
 	function returnLogin() {
-		
+
 		function loginRecieved(err) {
-			
+
 
 			if (err) {
 				return;
@@ -73,8 +82,8 @@ function setup() {
 					print(info)
 
 					//print( == getItem("Identifier") && info.password == getItem("Password"))
-					if (info.identifier == getItem("Identifier") && info.password == getItem("Password")) {
-						console.log("dine")
+					if (info.identifier == getItem("Identifier") && info.password == getItem("Password")&& info.ip == IPAddress) {
+
 						userInfo = JSON.parse(successMessage)
 						playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
 						buildingInfo = defaultsDeep(userInfo.buildingInfo, buildingInfo)
@@ -84,26 +93,12 @@ function setup() {
 
 
 					} else {
-						
+
 						print("imposta!")
+
 					}
-
-
-
-				})
+                    })
 			}
-
-			/*
-if (
-	getItem("Passsword") == 
-	getItem("Email")
-	getItem("Identifier")
-
-
-)
-*/
-
-
 		}
 		s3.getObject({
 			Key: getItem("Email") + "/data.txt"
@@ -129,12 +124,16 @@ if (
 
 
 
+
+
+
+
 	initializeBuildings(); //Initializes some building values
 	playerInfo.initializeProduction(); // Initializes resource generation
 
 
-	let logindiv = createDiv(); // Div for Google sign-in
-	logindiv.position(windowWidth / 2, windowHeight / 2)
+	logindiv = createDiv(); // Div for Google sign-in
+	logindiv.position((windowWidth / 2)-windowWidth/10.66 , windowHeight / 2)
 	logindiv.id("logindiv");
 
 
@@ -151,6 +150,8 @@ if (
 
 		}
 	}); //Get AWS S3 setup
+	
+		
 	returnLogin()
 
 
@@ -190,9 +191,12 @@ if (
 					if (err) {
 						if (err.code === "NoSuchKey") {
 							console.log("first time")
+							identifierRecord = generateId(100);
+							passwordRecord = generateId(100)
 							userInfo = {
-								identifier:  generateId(100),
-								password:  generateId(100),
+								ip: IPAddress,
+								identifier: identifierRecord,
+								password: passwordRecord,
 								email: parsedLoginInfo.email,
 								firstLoginTime: parsedLoginInfo.iat,
 								playerInfo: playerInfo,
@@ -211,6 +215,7 @@ if (
 								if (err) {
 									console.log(err)
 								} else {
+									console.log(userInfo)
 									storeItem("Identifier", userInfo.identifier)
 									storeItem("Password", userInfo.password)
 									storeItem("Email", userInfo.email)
@@ -288,7 +293,8 @@ if (
 		document.getElementById("logindiv"), {
 			theme: "outline",
 			size: "large",
-			width: windowWidth,
+			width: windowWidth / 5
+			,
 			click_listener: handleCredentials
 		} // Render sign in button with Google.
 	);
@@ -338,7 +344,9 @@ function postDataHandler() {
 
 	if (userInfo) {
 		userInfo = {
-
+			ip: IPAddress,
+			password: userInfo.password,
+			identifier: userInfo.identifier,
 			email: userInfo.email,
 			firstLoginTime: userInfo.firstLoginTime,
 			playerInfo: playerInfo,
