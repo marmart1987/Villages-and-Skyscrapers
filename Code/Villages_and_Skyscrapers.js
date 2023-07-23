@@ -30,7 +30,7 @@ var s3;
 var lastEvent
 var lastxy
 var IPAddress
-var loginDiv
+var logindiv
 
 
 
@@ -57,7 +57,7 @@ function preload() {
 
 function getIP(ip) {
 	IPAddress = ip.ip;
-	console.log(IPAddress)
+	console.debug(IPAddress)
 }
 //Preload images and other stuff
 function setup() {
@@ -79,9 +79,9 @@ function setup() {
 
 				value.then((successMessage) => {
 					let info = JSON.parse(successMessage);
-					print(info)
+					console.debug(info)
 
-					//print( == getItem("Identifier") && info.password == getItem("Password"))
+					//console.debug( == getItem("Identifier") && info.password == getItem("Password"))
 					if (info.identifier == getItem("Identifier") && info.password == getItem("Password")&& info.ip == IPAddress) {
 
 						userInfo = JSON.parse(successMessage)
@@ -94,7 +94,7 @@ function setup() {
 
 					} else {
 
-						print("imposta!")
+						console.debug("imposta!")
 
 					}
                     })
@@ -160,7 +160,7 @@ function setup() {
 
 			let credentials = response.credential;
 
-			console.log(response)
+			console.debug(response)
 
 			s3Login(parseJwt(credentials), response)
 
@@ -190,7 +190,7 @@ function setup() {
 
 					if (err) {
 						if (err.code === "NoSuchKey") {
-							console.log("first time")
+							console.debug("first time")
 							identifierRecord = generateId(100);
 							passwordRecord = generateId(100)
 							userInfo = {
@@ -213,9 +213,9 @@ function setup() {
 								Body: JSON.stringify(userInfo)
 							}, function (err, data) {
 								if (err) {
-									console.log(err)
+									console.debug(err)
 								} else {
-									console.log(userInfo)
+									console.debug(userInfo)
 									storeItem("Identifier", userInfo.identifier)
 									storeItem("Password", userInfo.password)
 									storeItem("Email", userInfo.email)
@@ -233,13 +233,13 @@ function setup() {
 
 
 						} else {
-							console.log(err)
+							console.debug(err)
 						}
 
 
 
 					} else {
-						console.log("not first login")
+						console.debug("not first login")
 						var href = this.request.httpRequest.endpoint.href;
 
 						bucketUrl = href + "vandsbucket" + "/" + parsedLoginInfo.email + "/data" + ".txt"
@@ -248,7 +248,7 @@ function setup() {
 
 						value.then((successMessage) => {
 
-							console.log(JSON.parse(successMessage), bucketUrl);
+							console.debug(JSON.parse(successMessage), bucketUrl);
 							userInfo = JSON.parse(successMessage)
 							playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
 							buildingInfo = defaultsDeep(userInfo.buildingInfo, buildingInfo)
@@ -257,7 +257,7 @@ function setup() {
 							storeItem("Email", userInfo.email)
 
 							activeTimers = defaultsDeep(userInfo.activeTimers, activeTimers) || []
-							console.log(activeTimers)
+							console.debug(activeTimers)
 							logindiv.hide()
 							loop();
 							playMenu()
@@ -270,7 +270,7 @@ function setup() {
 			}
 
 		} catch (e) {
-			console.log(e)
+			console.debug(e)
 		}
 
 
@@ -358,14 +358,14 @@ function postDataHandler() {
 
 		}
 
-		console.log("saving...")
+		console.debug("saving...")
 		s3.putObject({
 			Key: userInfo.email + "/data.txt",
 			Body: JSON.stringify(userInfo)
 		}, function (err, data) {
-			console.log("saved", data, userInfo.rand)
+			console.debug("saved", data, userInfo.rand)
 			if (err) {
-				console.log(err)
+				console.debug(err)
 			}
 
 
@@ -375,7 +375,7 @@ function postDataHandler() {
 
 
 	} else {
-		console.log("not loggedin")
+		console.debug("not loggedin")
 	}
 
 }
@@ -432,7 +432,7 @@ function timeout() {
 	if ((Date.now() - lastEvent) / 1000 > 27) {
 		if (postData) {
 			postDataHandler();
-			console.log("game timed out...");
+			console.debug("game timed out...");
 		}
 
 
@@ -442,7 +442,7 @@ function timeout() {
 		resourceUpdateTimer = null;
 		noLoop()
 	} else if (!postData) {
-		console.log("game resumed...")
+		console.debug("game resumed...")
 		postDataHandler()
 		postData = setInterval(postDataHandler, 7000);
 		resourceUpdateTimer = setInterval(playerInfo.updateResources, 1000)
@@ -484,7 +484,7 @@ function createMenuMenu(sector) {
 		buildingButtons[buildingCreator].resize(windowWidth / 15, windowWidth / 15);
 		buildingButtons[buildingCreator].text = buildingButtonsText[buildingCreator];
 		buildingButtons[buildingCreator].textSize = windowWidth / (buildingButtonsText[buildingCreator].length * 9)
-		console.log(buildingButtonsText[buildingCreator].length)
+		console.debug(buildingButtonsText[buildingCreator].length)
 	}
 	sector1 = sector;
 }

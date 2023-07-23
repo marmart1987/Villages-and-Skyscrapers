@@ -71,12 +71,12 @@
 
       }
 
-      console.log(playerInfo.resources, playerInfo.unroundedResources)
+      console.debug(playerInfo.resources, playerInfo.unroundedResources)
       playerInfo.lastResourceUpdate = Date.now();
       // }
     },
     initializeProduction: function () {
-      console.error(buildingInfo.length)
+      
 
       for (let [key, value] of Object.entries(playerInfo.production)) {
         if (!playerInfo.production[key].amount) {
@@ -89,7 +89,7 @@
 
       }
       playerInfo.unroundedResources = JSON.parse(JSON.stringify(playerInfo.resources));
-      console.log(playerInfo.unroundedResources)
+      console.debug(playerInfo.unroundedResources)
 
 
 
@@ -109,7 +109,7 @@ addBuildings = function (amount, section, order) {
 
   buildingInfo[section][order].timer = new startTimer(buildingInfo[section][order].time, section, order, amount);
 
-  console.log(activeTimers,"started");
+  console.debug(activeTimers,"started");
 
 }
 
@@ -120,13 +120,13 @@ function startTimer(timeS, section, order, amount) {
     if (Object.getOwnPropertyDescriptor(playerInfo.resources, Object.keys(buildingInfo[section][order].resources)[i])) {
 
 
-      console.log(i)
+      console.debug(i)
       let p = Object.getOwnPropertyDescriptor(playerInfo.resources, Object.keys(buildingInfo[section][order].resources)[i]);
       let l = p.value - Object.values(buildingInfo[section][order].resources)[i];
       Object.defineProperty(playerInfo.resources, Object.keys(buildingInfo[section][order].resources)[i], {
         value: l
       });
-      console.log(playerInfo)
+      console.debug(playerInfo)
 
     } else {
       console.error("Material doesn't exist" + " : '" + Object.keys(buildingInfo[section][order].resources)[i] + "'. If issue persists contact developer.");
@@ -151,7 +151,7 @@ function startTimer(timeS, section, order, amount) {
 
 timerFinished = function (arNum) {
 
-  console.log(activeTimers, "finished");
+  console.debug(activeTimers, "finished");
   buildingInfo[activeTimers[arNum].section][activeTimers[arNum].order].amount += activeTimers[arNum].amount;
 
   if (buildingInfo[activeTimers[arNum].section][activeTimers[arNum].order].benifits()) {
@@ -201,11 +201,11 @@ function defaultsDeep(target, defaults) {
 
 initializeBuildings = function () {
   buildingInfo.length = Object.keys(buildingInfo).length;
-  console.error(buildingInfo.length)
+ 
 
   for (let i = 0; i < buildingInfo.length; i++) {
     buildingInfo[i].length = Object.keys(buildingInfo[i]).length
-    console.log(buildingInfo[i])
+    console.debug(buildingInfo[i])
 
 
     for (let j = 0; j < buildingInfo[i].length; j++) {

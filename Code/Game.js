@@ -4,7 +4,7 @@ function game() {
 
 
 
-	text(buildingInfo, windowWidth / 2, windowHeight / 2);
+	
 	createButton1.locate(1 / 8, windowHeight / 1.22, windowWidth / 20, windowWidth / 20);
 	createButton1.text = "";
 	createButton1.image = create;
