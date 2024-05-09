@@ -186,11 +186,13 @@ function Clickable(x, y) {
 
 	cl_clickables.push(this);
 	this.hide = function () {
+		if (!this.y > 0) {return}
 
 		// fill(255);
 		//  stroke(255);
 		strokeWeight(this.strokeWeight + 1);
 		erase(255, 255);
+		
 		rect(this.x, this.y, this.width, this.height, this.cornerRadius);
 		noErase();
 		this.locate(1000000, 1000000);

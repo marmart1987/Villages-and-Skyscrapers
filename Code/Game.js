@@ -4,11 +4,12 @@ function game() {
 
 
 
-	
-	createButton1.locate(1 / 8, windowHeight / 1.22, windowWidth / 20, windowWidth / 20);
+//creationButtons[buttonCreator].locate(((windowWidth + windowHeight) / 2) / 7 * (buttonCreator + 1), windowHeight/ 1-(((windowWidth + windowHeight) / 2) / 7)*1.275);/// 1.22
+
+	createButton1.locate(0,windowHeight/2, windowWidth / 20, windowWidth / 20);
 	createButton1.text = "";
 	createButton1.image = create;
-	createButton1.resize(windowWidth / 15, windowWidth / 15);
+	createButton1.resize(((windowWidth + windowHeight) / 2) / 7, ((windowWidth + windowHeight) / 2) / 7);
 	createButton1.strokeWeight = 0;
 	createButton1.onHover = function () {
 
@@ -27,7 +28,9 @@ function game() {
 				buildingButtons[update].onPress = function () {
 					try {
 						BuildConfirm(update, updatee);
-					}catch(err){console.warn(err)}
+					} catch (err) {
+						console.warn(err)
+					}
 
 
 

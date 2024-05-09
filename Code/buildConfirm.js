@@ -1,7 +1,11 @@
 function BuildConfirm(BuildingNo, sector) {
   confirming = true;
+  for (buildingHider = 0; buildingHider[buildingCreator] !== undefined; buildingHider++) {
+		buildingButtons[buildingHider].hide();
 
- 
+	}
+
+
   strokeWeight(10);
 
   for (buildingHider = 0; buildingHider < buildingInfo.length; buildingHider++) {
@@ -10,7 +14,7 @@ function BuildConfirm(BuildingNo, sector) {
   for (buildingHider = 0; buildingHider < buildingButtonsText.length; buildingHider++) {
     buildingButtons[buildingHider].hide();
   }
-
+  createButton1.draw();
   background(0, 0, 0, 150)
   stroke(0);
   rect(windowWidth / 3, windowHeight / 10 + 5, windowWidth / 3, (windowHeight / 1.22) - (windowHeight / 10 + 10), 30);
@@ -85,6 +89,7 @@ function BuildConfirm(BuildingNo, sector) {
 
 function hideConfirm() {
   clear();
+  confirming = false;
 
   game();
 

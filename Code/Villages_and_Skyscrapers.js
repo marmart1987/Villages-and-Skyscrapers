@@ -1,6 +1,6 @@
 var playButton;
 var gaming;
-var confirming;
+var cbonfirming;
 var createButton1;
 var hideConfirmButton;
 var creationButtons = [];
@@ -31,6 +31,7 @@ var lastEvent
 var lastxy
 var IPAddress
 var logindiv
+var confirming
 
 
 
@@ -61,50 +62,10 @@ function getIP(ip) {
 }
 //Preload images and other stuff
 function setup() {
+	console.log(JSON.stringify(buildingInfo))
 
 
-	function returnLogin() {
 
-		function loginRecieved(err) {
-
-
-			if (err) {
-				return;
-			} else {
-				let href = this.request.httpRequest.endpoint.href;
-
-				let bucketUrl = href + "vandsbucket" + "/" + getItem("Email") + "/data" + ".txt"
-				let value = httpGet(bucketUrl, "text")
-
-
-				value.then((successMessage) => {
-					let info = JSON.parse(successMessage);
-					console.debug(info)
-
-					//console.debug( == getItem("Identifier") && info.password == getItem("Password"))
-					if (info.identifier == getItem("Identifier") && info.password == getItem("Password")&& info.ip == IPAddress) {
-
-						userInfo = JSON.parse(successMessage)
-						playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
-						buildingInfo = defaultsDeep(userInfo.buildingInfo, buildingInfo)
-						activeTimers = defaultsDeep(userInfo.activeTimers, activeTimers) || []
-						logindiv.hide()
-						return;
-
-
-					} else {
-
-						console.debug("imposta!")
-
-					}
-                    })
-			}
-		}
-		s3.getObject({
-			Key: getItem("Email") + "/data.txt"
-		}, loginRecieved)
-
-	}
 
 
 
@@ -118,51 +79,199 @@ function setup() {
 
 
 
-
-
-
-
-
-
-
-
-
-
 	initializeBuildings(); //Initializes some building values
 	playerInfo.initializeProduction(); // Initializes resource generation
 
 
 	logindiv = createDiv(); // Div for Google sign-in
-	logindiv.position((windowWidth / 2)-windowWidth/10.66 , windowHeight / 2)
+	logindiv.position((windowWidth / 2) - windowWidth / 10.66, windowHeight / 2)
 	logindiv.id("logindiv");
 
+	/*
+		AWS.config.region = 'us-east-1';
+		AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 
-	AWS.config.region = 'us-east-1';
-	AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+			IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
+		}); //Get AWS Credentials
 
-		IdentityPoolId: 'us-east-1:6f08b6e9-cb5a-4ac5-a418-096b814b92c9',
-	}); //Get AWS Credentials
+		s3 = new AWS.S3({
+			apiVersion: '2006-03-01',
+			params: {
+				Bucket: "vandsbucket"
 
-	s3 = new AWS.S3({
-		apiVersion: '2006-03-01',
-		params: {
-			Bucket: "vandsbucket"
+			}
+		}); //Get AWS S3 setup
+		*/
 
+	/*
+
+	if (getItem("Identifier") && getItem("Email") && getItem("Password")) {
+		console.log("Logging in Autonomously");
+
+		async function autoLogin(err) {
+			if (err) {
+				return;
+			} else {
+				try {
+					var href = this.request.httpRequest.endpoint.href;
+					console.log(href, this)
+
+					bucketUrl = href + "vandsbucket" + "/" + getItem("Email") + "/data" + ".txt"
+					let value = httpGet(bucketUrl, "text")
+					value.then((successMessage) => {
+						info = JSON.parse(successMessage)
+
+
+						if (info.identifier == getItem("Identifier") && info.password == getItem("Password")) {
+
+							retrieveData(value)
+							console.log("Logged in");
+
+
+						} else {
+
+							console.debug("imposta!", info)
+
+						}
+					})
+				} catch (err) {
+					console.warn(err)
+				}
+			}
 		}
-	}); //Get AWS S3 setup
-	
-		
-	returnLogin()
+		s3.getObject({
+			Key: getItem("Email") + "/data.txt"
+		}, autoLogin)
 
 
-	handleCredentials = function (response) {
+	}
+	async function retrieveData(value) {
+
+		value.then((successMessage) => {
+
+			console.debug(JSON.parse(successMessage), bucketUrl);
+			userInfo = JSON.parse(successMessage)
+			playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
+
+			storeItem("Identifier", userInfo.identifier)
+			storeItem("Password", userInfo.password)
+			storeItem("Email", userInfo.email)
+
+			activeTimers = defaultsDeep(userInfo.activeTimers, activeTimers) || []
+			console.debug(activeTimers)
+			logindiv.hide()
+
+
+		})
+	}
+
+
+	async function handleCredentials(response) {
 		try {
+			console.log(response)
 
 			let credentials = response.credential;
 
 			console.debug(response)
 
-			s3Login(parseJwt(credentials), response)
+			parsedLoginInfo = parseJwt(credentials)
+			console.log(response, parsedLoginInfo)
+
+
+			try {
+				if (parsedLoginInfo) {
+					background(0, 0, 0, 200)
+					logingin = true;
+
+					await s3.getObject({
+						Key: parsedLoginInfo.email + "/data.txt"
+					}, login)
+
+					function login(err) {
+						if (err) { //New User
+							if (err.code === "NoSuchKey") {
+								console.debug("first time")
+								identifierRecord = generateId(100);
+								passwordRecord = generateId(100)
+								userInfo = {
+									ip: IPAddress,
+									identifier: identifierRecord,
+									password: passwordRecord,
+									email: parsedLoginInfo.email,
+									firstLoginTime: parsedLoginInfo.iat,
+									playerInfo: playerInfo,
+
+									activeTimers: activeTimers,
+
+
+
+
+								}
+
+								s3.putObject({
+									Key: parsedLoginInfo.email + "/data.txt",
+									Body: JSON.stringify(userInfo)
+								}, function (err, data) {
+									if (err) {
+										console.debug(err)
+									} else {
+										console.debug(userInfo)
+										storeItem("Identifier", userInfo.identifier)
+										storeItem("Password", userInfo.password)
+										storeItem("Email", userInfo.email)
+
+
+
+
+									}
+
+									logindiv.hide()
+									loop();
+									playMenu()
+									logingin = false;
+								})
+
+
+							} else {
+								console.debug(err)
+							}
+
+
+
+						} else { //Returning User
+							console.debug("not first login", this)
+							var href = this.request.httpRequest.endpoint.href;
+
+							bucketUrl = href + "vandsbucket" + "/" + parsedLoginInfo.email + "/data" + ".txt"
+							let value = httpGet(bucketUrl, "text")
+
+							retrieveData(value);
+
+
+
+							loop()
+							playMenu()
+							logingin = false;
+						}
+					};
+
+
+
+
+				}
+
+
+			} catch (e) {
+				console.debug(e)
+			}
+
+
+
+
+
+
+
+
 
 		} catch (err) {
 			console.warn(err)
@@ -170,114 +279,24 @@ function setup() {
 
 	}
 
-	async function s3Login(parsedLoginInfo) {
-
-
-
-
+*/
+	async function handleCredentials(response) {
 		try {
-			if (parsedLoginInfo) {
-				background(0, 0, 0, 200)
+			console.log(response)
 
-				background(0, 0, 0, 200)
-				logingin = true;
+			let credentials = response.credential;
 
-				await s3.getObject({
-					Key: parsedLoginInfo.email + "/data.txt"
-				}, handleReceived);
+			console.debug(response)
 
-				async function handleReceived(err) {
-
-					if (err) {
-						if (err.code === "NoSuchKey") {
-							console.debug("first time")
-							identifierRecord = generateId(100);
-							passwordRecord = generateId(100)
-							userInfo = {
-								ip: IPAddress,
-								identifier: identifierRecord,
-								password: passwordRecord,
-								email: parsedLoginInfo.email,
-								firstLoginTime: parsedLoginInfo.iat,
-								playerInfo: playerInfo,
-								buildingInfo: buildingInfo,
-								activeTimers: activeTimers,
+			parsedLoginInfo = parseJwt(credentials)
+			console.log(response, parsedLoginInfo)
+			
 
 
 
-
-							}
-
-							s3.putObject({
-								Key: parsedLoginInfo.email + "/data.txt",
-								Body: JSON.stringify(userInfo)
-							}, function (err, data) {
-								if (err) {
-									console.debug(err)
-								} else {
-									console.debug(userInfo)
-									storeItem("Identifier", userInfo.identifier)
-									storeItem("Password", userInfo.password)
-									storeItem("Email", userInfo.email)
-
-
-
-
-								}
-
-								logindiv.hide()
-								loop();
-								playMenu()
-								logingin = false;
-							})
-
-
-						} else {
-							console.debug(err)
-						}
-
-
-
-					} else {
-						console.debug("not first login")
-						var href = this.request.httpRequest.endpoint.href;
-
-						bucketUrl = href + "vandsbucket" + "/" + parsedLoginInfo.email + "/data" + ".txt"
-						let value = httpGet(bucketUrl, "text")
-
-
-						value.then((successMessage) => {
-
-							console.debug(JSON.parse(successMessage), bucketUrl);
-							userInfo = JSON.parse(successMessage)
-							playerInfo = defaultsDeep(userInfo.playerInfo, playerInfo)
-							buildingInfo = defaultsDeep(userInfo.buildingInfo, buildingInfo)
-							storeItem("Identifier", userInfo.identifier)
-							storeItem("Password", userInfo.password)
-							storeItem("Email", userInfo.email)
-
-							activeTimers = defaultsDeep(userInfo.activeTimers, activeTimers) || []
-							console.debug(activeTimers)
-							logindiv.hide()
-							loop();
-							playMenu()
-							logingin = false;
-						})
-					}
-				}
-
-
-			}
-
-		} catch (e) {
-			console.debug(e)
+		} catch (err) {
+			console.warn(err)
 		}
-
-
-
-
-		return;
-
 	}
 
 	// Get response from Google. Use response to get user's info.
@@ -293,8 +312,7 @@ function setup() {
 		document.getElementById("logindiv"), {
 			theme: "outline",
 			size: "large",
-			width: windowWidth / 5
-			,
+			width: windowWidth / 5,
 			click_listener: handleCredentials
 		} // Render sign in button with Google.
 	);
@@ -303,7 +321,7 @@ function setup() {
 
 
 
-	var cnv = createCanvas(windowWidth, windowHeight); //Create Canvas
+	var cnv = createCanvas(windowWidth, windowHeight); // Canvas
 
 
 	cnv.parent('game-holder'); //Moves canvas to the HTML div "game-holder"
@@ -337,6 +355,7 @@ function setup() {
 	resourceUpdateTimer = setInterval(playerInfo.updateResources, 1000)
 
 
+
 }
 //Runs on program start
 
@@ -350,7 +369,7 @@ function postDataHandler() {
 			email: userInfo.email,
 			firstLoginTime: userInfo.firstLoginTime,
 			playerInfo: playerInfo,
-			buildingInfo: buildingInfo,
+
 			activeTimers: activeTimers,
 			rand: random(1, 1000000000)
 
@@ -384,7 +403,9 @@ function postDataHandler() {
 function draw() {
 	function drawButtons() {
 		playButton.draw();
-		createButton1.draw();
+		if (!confirming) {
+			createButton1.draw();
+		}
 
 		for (buttondrawer = 0; buttondrawer < buildingInfo.length; buttondrawer++) {
 			creationButtons[buttondrawer].draw();
@@ -457,12 +478,15 @@ function timeout() {
 
 function createMenu() {
 	for (buttonCreator = 0; buttonCreator < buildingInfo.length; buttonCreator++) {
-		creationButtons[buttonCreator].locate(windowWidth / 15 * (buttonCreator + 1), windowHeight / 1.22);
-		creationButtons[buttonCreator].resize(windowWidth / 15, windowWidth / 15);
-		//creationButtons[buttonCreator].text = creationButtonsText[buttonCreator];
-		creationButtons[buttonCreator].textScaled = true;
-		creationButtons[buttonCreator].text = "";
-		creationButtons[buttonCreator].image = sectorImages[buttonCreator];
+		console.log(windowHeight / 5 * (buttonCreator + 1) * 1.5 + "," + buttonCreator + "   " + windowWidth);
+		if (windowHeight / 4.5 * (buttonCreator + 2) < windowWidth) {
+			creationButtons[buttonCreator].locate(windowHeight / 4.5 * (buttonCreator + 1), windowHeight - windowHeight / 3.75); /// 1.22
+			creationButtons[buttonCreator].resize(windowHeight / 4.5, windowHeight / 4.5);
+			//creationButtons[buttonCreator].text = creationButtonsText[buttonCreator];
+			creationButtons[buttonCreator].textScaled = true;
+			creationButtons[buttonCreator].text = "";
+			creationButtons[buttonCreator].image = sectorImages[buttonCreator];
+		}
 
 	}
 }
@@ -479,12 +503,18 @@ function createMenuMenu(sector) {
 	}
 
 	for (buildingCreator = 0; buildingCreator < buildingButtonsText.length; buildingCreator++) {
+		try {
+			if (buildingButtonsText[buildingCreator] === " ") {
+				console.error("Invalid Name for building " + sector + "," + buildingCreator + ".")
+			}
+			buildingButtons[buildingCreator].locate(windowWidth / 15 * (buildingCreator + 1), windowHeight / 1.22 - windowWidth / 15);
+			buildingButtons[buildingCreator].resize(windowWidth / 15, windowWidth / 15);
+			buildingButtons[buildingCreator].text = buildingButtonsText[buildingCreator];
+			buildingButtons[buildingCreator].textSize = windowWidth / (buildingButtonsText[buildingCreator].length * 9)
 
-		buildingButtons[buildingCreator].locate(windowWidth / 15 * (buildingCreator + 1), windowHeight / 1.22 - windowWidth / 15);
-		buildingButtons[buildingCreator].resize(windowWidth / 15, windowWidth / 15);
-		buildingButtons[buildingCreator].text = buildingButtonsText[buildingCreator];
-		buildingButtons[buildingCreator].textSize = windowWidth / (buildingButtonsText[buildingCreator].length * 9)
-		console.debug(buildingButtonsText[buildingCreator].length)
+		} catch (err) {
+			console.error(err)
+		}
 	}
 	sector1 = sector;
 }
@@ -502,6 +532,7 @@ function updateBuildings() {
 
 	}
 }
+
 //Updates menu
 
 function mousePressed() {
